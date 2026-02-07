@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine, Shahodyyyyy?</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;600;700&family=Dancing+Script:wght@600&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Modern CSS Reset & Variables */
+        :root {
+            --primary-color: #ff4d6d;
+            --secondary-color: #ff8fa3;
+            --bg-gradient-start: #ff758c;
+            --bg-gradient-end: #ff7eb3;
+            --text-color: #590d22;
+            --btn-yes-bg: #2dc653;
+            --btn-yes-hover: #208b3a;
+            --btn-no-bg: #d90429;
+            --btn-no-hover: #ef233c;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* Elements might fly out */
+            position: relative;
+        }
+
+        /* Floating background hearts */
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.3);
+            animation: float linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(110vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Container for content */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        /* GIF Styling */
+        .gif-container {
+            margin-bottom: 2rem;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform: translateZ(0);
+            /* Hardware accel */
+        }
+
+        .gif-container img {
+            width: 100%;
+            height: 250px;
+            /* Fixed height */
+            object-fit: cover;
+            /* Ensures image covers area without distortion */
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .gif-container:hover img {
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+            min-height: 4.2rem;
+            /* Reserve space for typewriter */
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        /* Button Group */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            min-height: 80px;
+            position: relative;
+        }
+
+        button {
+            padding: 14px 32px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        button:hover::after {
+            opacity: 1;
+        }
+
+        /* Yes Button */
+        #btn-yes {
+            background-color: var(--btn-yes-bg);
+            background-image: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            font-size: 1.2rem;
+            /* Base size */
+        }
+
+        #btn-yes:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+        }
+
+        /* No Button */
+        #btn-no {
+            background-color: var(--btn-no-bg);
+            background-image: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            color: white;
+        }
+
+        #btn-no:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+
+
+        /* Message in a Bottle Float Button */
+        .bottle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 100;
+            animation: floatBottle 3s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s;
+        }
+
+        .bottle-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .bottle-btn i {
+            font-size: 2.5rem;
+            color: #fff;
+            /* Basic white icon, can be replaced with image */
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes floatBottle {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        /* Letter Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .parchment {
+            background-color: #f4e4bc;
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            /* Subtle texture if available */
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(160, 82, 45, 0.3);
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'Dancing Script', cursive;
+            color: #5c4033;
+            line-height: 1.6;
+            font-size: 1.5rem;
+            text-align: left;
+        }
+
+        .modal-overlay.open .parchment {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: #8b4513;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: sans-serif;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .close-modal:hover {
+            opacity: 1;
+        }
+
+        /* Screen States */
+        .screen {
+            display: none;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Acceptance Screen Styles */
+        .photo-frame {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 2rem;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 6px solid white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        .photo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .reasons-btn {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+            padding: 12px 24px;
+            font-size: 1rem;
+        }
+
+        #reason-display {
+            min-height: 3rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 36px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.2rem;
+                min-height: 5rem;
+            }
+
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 16px;
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .photo-frame {
+                width: 200px;
+                height: 200px;
+            }
+
+            .parchment {
+                width: 85%;
+                padding: 20px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Autoplay Music Hack using iframe (more aggressive than audio tag) -->
+    <iframe src="amr.mp3" allow="autoplay" style="display:none" id="iframeAudio"></iframe>
+    <audio id="bg-music" autoplay loop>
+        <source src="amr.mp3" type="audio/mpeg">
+    </audio>
+
+
+
+    <!-- Message in a Bottle Button -->
+    <button class="bottle-btn" id="open-letter-btn">
+        <i class="fas fa-wine-bottle"></i>
+    </button>
+
+    <!-- Letter Modal -->
+    <div class="modal-overlay" id="letter-modal">
+        <div class="parchment">
+            <button class="close-modal" id="close-letter-btn">&times;</button>
+            <p>My Dearest Shahodyyyyy,</p>
+            <br>
+            <p>
+                From the moment I met you, my world became brighter. You are the reason for my smiles and the beat of my
+                heart.
+            </p>
+            <p>
+                I wanted to ask you this in a special way because you are incredibly special to me.
+            </p>
+            <br>
+            <p>Forever Yours,</p>
+            <p>❤️</p>
+        </div>
+    </div>
+
+    <!-- Dynamic Background Hearts Container -->
+    <div id="bg-hearts"></div>
+
+    <div class="container">
+        <!-- Screen 1: The Proposal -->
+        <div id="screen-proposal" class="screen active">
+            <div class="gif-container">
+                <!-- Cute bear asking question -->
+                <img id="proposal-gif"
+                    src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzBwdnVrMWowcTh6bXlqaTQ5cDV1NjExcjJ0ZG4xbWtlaHZ2M3c3aiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LbC9yf16pIS74lXTDc/giphy.gif"
+                    alt="Cute Proposal GIF">
+            </div>
+
+            <h1 id="typewriter-text"></h1> <!-- Content filled by JS -->
+            <p class="subtitle">I have a specific question for you...</p>
+
+            <div class="btn-group">
+                <button id="btn-yes">Yes, I will!</button>
+                <button id="btn-no">No</button>
+            </div>
+        </div>
+
+        <!-- Screen 2: The Acceptance -->
+        <div id="screen-acceptance" class="screen">
+            <h1>Yay! I love you so much! ❤️</h1>
+
+            <div class="photo-frame">
+                <!-- 
+                    CUSTOMIZE HERE: Replace the src below with the URL of your partner's photo.
+                -->
+                <div class="photo-placeholder">
+                    <img src="WhatsApp Image 2026-02-07 at 8.57.49 PM.jpeg" alt="Partner Photo">
+                </div>
+            </div>
+
+            <p class="subtitle">Best Valentine Ever!</p>
+
+            <div id="reason-display"></div>
+            <button class="reasons-btn" id="btn-reasons">
+                <i class="fas fa-heart"></i> Why I love you?
+            </button>
+
+            <!-- 
+                CUSTOMIZE HERE: Replace '1234567890' with your actual phone number.
+            -->
+            <a href="https://wa.me/01068083975?text=I_love_you_too!" target="_blank" class="whatsapp-btn">
+                <i class="fab fa-whatsapp"></i> Send Love
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnYes = document.getElementById('btn-yes');
+            const btnNo = document.getElementById('btn-no');
+            const screenProposal = document.getElementById('screen-proposal');
+            const screenAcceptance = document.getElementById('screen-acceptance');
+            const bgHeartsContainer = document.getElementById('bg-hearts');
+            const proposalGif = document.getElementById('proposal-gif');
+            const bgMusic = document.getElementById('bg-music');
+            const btnReasons = document.getElementById('btn-reasons');
+            const reasonDisplay = document.getElementById('reason-display');
+            const openLetterBtn = document.getElementById('open-letter-btn');
+            const closeLetterBtn = document.getElementById('close-letter-btn');
+            const letterModal = document.getElementById('letter-modal');
+
+            /* --- 1. Background Music Toggle & Autoplay --- */
+            let isPlaying = false;
+
+            function playMusic() {
+                bgMusic.play()
+                    .then(() => {
+                        isPlaying = true;
+                        musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    })
+                    .catch(err => {
+                        console.log("Autoplay blocked by browser (waiting for interaction).");
+                        isPlaying = false;
+                        musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+                    });
+            }
+
+            // Attempt autoplay on load
+            playMusic();
+
+            // Fallback: Play on first click anywhere (EXCEPT "No")
+            const fallbackPlay = (e) => {
+                // If the click is on the "No" button, ignore it (don't play, don't remove listener)
+                if (e.target.closest('#btn-no')) return;
+
+                if (!isPlaying) {
+                    playMusic();
+                    // Remove this listener so it doesn't fire again
+                    document.body.removeEventListener('click', fallbackPlay);
+                }
+            };
+
+            document.body.addEventListener('click', fallbackPlay);
+
+
+
+            /* --- 2. Message in a Bottle Logic --- */
+            openLetterBtn.addEventListener('click', () => {
+                letterModal.classList.add('open');
+            });
+
+            closeLetterBtn.addEventListener('click', () => {
+                letterModal.classList.remove('open');
+            });
+
+            // Close modal when clicking outside parchment
+            letterModal.addEventListener('click', (e) => {
+                if (e.target === letterModal) {
+                    letterModal.classList.remove('open');
+                }
+            });
+
+            /* --- 3. Typewriter Effect --- */
+            const textToType = "Will you be my Valentine, Shahodyyyyy? 🌹";
+            const typeHeader = document.getElementById('typewriter-text');
+            let typeIndex = 0;
+
+            function typeWriter() {
+                if (typeIndex < textToType.length) {
+                    typeHeader.innerHTML += textToType.charAt(typeIndex);
+                    typeIndex++;
+                    setTimeout(typeWriter, 70); // Typing speed
+                }
+            }
+            // Start typing after a short delay
+            setTimeout(typeWriter, 500);
+
+
+            /* --- 4. Background Hearts Generator --- */
+            function createFloatingHearts() {
+                const heartCount = 20;
+                for (let i = 0; i < heartCount; i++) {
+                    const heart = document.createElement('i');
+                    heart.classList.add('fas', 'fa-heart', 'bg-heart');
+
+                    // Random properties
+                    const size = Math.random() * 20 + 10 + 'px';
+                    const left = Math.random() * 100 + 'vw';
+                    const duration = Math.random() * 10 + 5 + 's';
+                    const delay = Math.random() * 5 + 's';
+
+                    heart.style.fontSize = size;
+                    heart.style.left = left;
+                    heart.style.animationDuration = duration;
+                    heart.style.animationDelay = delay;
+
+                    bgHeartsContainer.appendChild(heart);
+                }
+            }
+            createFloatingHearts();
+
+            /* --- 5. Button Logic --- */
+            const noTexts = [
+                "Are you sure?", "Really sure?", "Think again!", "Last chance!",
+                "Surely not?", "You might regret this!", "Give it another thought!",
+                "Are you absolutely certain?", "This could be a mistake!", "Have a heart!",
+                "Don't be so cold!", "Change of heart?", "Wouldn't you reconsider?",
+                "Is that your final answer?", "You're breaking my heart ;("
+            ];
+
+            // Add sad GIFs here
+            const sadGifs = [
+                "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDVtc2VmcWZrZzgyd3YxOGI0dTVia21lajl5eXA1MG9zdzZsNWR0ZiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/H6cmWzp6LGFvqjidB7/giphy.gif", // Crying
+                "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZDNweTA4anBsd2pkYTcxdHJnanFmMmxkaGM0ejhqODcyNGdraXBpOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/P53TSsopKicrm/giphy.gif", // Sad cat
+                "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDVtc2VmcWZrZzgyd3YxOGI0dTVia21lajl5eXA1MG9zdzZsNWR0ZiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/dJYoOVAWf2QkU/giphy.gif", // Crying animation
+                "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ZHBxaXN1NDlxZG9hOXh6MXQ5Zm5sd2pwN2NmejA3aHNsNWFlbzRtYiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/wfS4vDyVsASQygl4mN/giphy.gif",
+                "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ODk2NmZzYzJxbWN2a3gzd2ZleTIyc2xxNmhpMTAwb2U5NzExeWNzaiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/NTY1kHmcLsCsg/giphy.gif",
+                "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDVtc2VmcWZrZzgyd3YxOGI0dTVia21lajl5eXA1MG9zdzZsNWR0ZiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/98MaHVwJOmWMz4cz1K/giphy.gif"  // Sadness
+            ];
+
+            let noClickCount = 0;
+
+            // "Run away" effect on hover
+            btnNo.addEventListener('mouseover', () => {
+                if (noClickCount > 0 && noClickCount < 5) {
+                    const x = Math.random() * 60 - 30;
+                    const y = Math.random() * 60 - 30;
+                    btnNo.style.transform = `translate(${x}px, ${y}px)`;
+                }
+            });
+
+            btnNo.addEventListener('click', () => {
+                btnNo.style.transform = 'translate(0, 0)';
+
+                if (noClickCount < noTexts.length) {
+                    btnNo.innerText = noTexts[noClickCount];
+                } else {
+                    btnNo.innerText = noTexts[Math.floor(Math.random() * noTexts.length)];
+                }
+
+                // Change GIF to a sad one
+                const randomGif = sadGifs[Math.floor(Math.random() * sadGifs.length)];
+                proposalGif.src = randomGif;
+
+                noClickCount++;
+
+                const currentNoSize = parseFloat(window.getComputedStyle(btnNo).fontSize);
+                const currentNoPadding = parseFloat(window.getComputedStyle(btnNo).paddingTop);
+
+                if (currentNoSize > 8) {
+                    btnNo.style.fontSize = `${currentNoSize * 0.85}px`;
+                    btnNo.style.padding = `${currentNoPadding * 0.85}px ${currentNoPadding * 0.85 * 2}px`;
+                }
+
+                const currentYesSize = parseFloat(window.getComputedStyle(btnYes).fontSize);
+                const currentYesPadding = parseFloat(window.getComputedStyle(btnYes).paddingTop);
+
+                if (currentYesSize < 120) {
+                    btnYes.style.fontSize = `${currentYesSize * 1.2}px`;
+                    btnYes.style.padding = `${currentYesPadding * 1.15}px ${currentYesPadding * 1.15 * 2}px`;
+                }
+            });
+
+            /* --- 6. Acceptance Logic & Reasons --- */
+            const reasons = [
+                "Your beautiful smile illuminates my world.",
+                "Your kindness towards everyone.",
+                "The way you look at me makes me melt.",
+                "Your laugh is my favorite sound.",
+                "You make even the boring days fun.",
+                "Your unwavering support through everything.",
+                "You are my best friend and my love.",
+                "The way you care about the little things.",
+                "Because you are simply YOU!",
+                "Every moment with you is a blessing."
+            ];
+
+            btnYes.addEventListener('click', () => {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff4d6d', '#ff8fa3', '#ffffff']
+                });
+
+                screenProposal.style.display = 'none';
+                screenAcceptance.classList.add('active');
+
+                const end = Date.now() + 15 * 1000;
+                const colors = ['#ff4d6d', '#ff8fa3', '#ffffff'];
+
+                (function frame() {
+                    confetti({
+                        particleCount: 2,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: colors
+                    });
+                    confetti({
+                        particleCount: 2,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: colors
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            });
+
+            btnReasons.addEventListener('click', () => {
+                const randomReason = reasons[Math.floor(Math.random() * reasons.length)];
+                reasonDisplay.innerText = `"${randomReason}"`;
+
+                confetti({
+                    particleCount: 30,
+                    spread: 50,
+                    origin: { y: 0.8 },
+                    colors: ['#FF6B6B', '#FF8E53']
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
