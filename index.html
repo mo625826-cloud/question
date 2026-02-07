@@ -149,8 +149,10 @@
         }
 
         button {
-            padding: 14px 32px;
-            font-size: 1.2rem;
+            padding: 10px 24px;
+            /* Reduced padding */
+            font-size: 1rem;
+            /* Reduced font size */
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -186,7 +188,7 @@
             background-color: var(--btn-yes-bg);
             background-image: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
             color: white;
-            font-size: 1.2rem;
+            font-size: 1rem;
             /* Base size */
         }
 
@@ -457,13 +459,9 @@
 
 <body>
 
-    <!-- Autoplay Music Hack using iframe (more aggressive than audio tag) -->
-    <iframe src="amr.mp3" allow="autoplay" style="display:none" id="iframeAudio"></iframe>
-    <audio id="bg-music" autoplay loop>
+    <audio id="bg-music" loop> <!-- Removed autoplay -->
         <source src="amr.mp3" type="audio/mpeg">
     </audio>
-
-
 
     <!-- Message in a Bottle Button -->
     <button class="bottle-btn" id="open-letter-btn">
@@ -554,39 +552,6 @@
             const openLetterBtn = document.getElementById('open-letter-btn');
             const closeLetterBtn = document.getElementById('close-letter-btn');
             const letterModal = document.getElementById('letter-modal');
-
-            /* --- 1. Background Music Toggle & Autoplay --- */
-            let isPlaying = false;
-
-            function playMusic() {
-                bgMusic.play()
-                    .then(() => {
-                        isPlaying = true;
-                        musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    })
-                    .catch(err => {
-                        console.log("Autoplay blocked by browser (waiting for interaction).");
-                        isPlaying = false;
-                        musicBtn.innerHTML = '<i class="fas fa-music"></i>';
-                    });
-            }
-
-            // Attempt autoplay on load
-            playMusic();
-
-            // Fallback: Play on first click anywhere (EXCEPT "No")
-            const fallbackPlay = (e) => {
-                // If the click is on the "No" button, ignore it (don't play, don't remove listener)
-                if (e.target.closest('#btn-no')) return;
-
-                if (!isPlaying) {
-                    playMusic();
-                    // Remove this listener so it doesn't fire again
-                    document.body.removeEventListener('click', fallbackPlay);
-                }
-            };
-
-            document.body.addEventListener('click', fallbackPlay);
 
 
 
@@ -722,6 +687,7 @@
             ];
 
             btnYes.addEventListener('click', () => {
+                bgMusic.play(); // Play music when "Yes" is clicked
                 confetti({
                     particleCount: 150,
                     spread: 70,
