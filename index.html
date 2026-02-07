@@ -532,7 +532,7 @@
             <!-- 
                 CUSTOMIZE HERE: Replace '1234567890' with your actual phone number.
             -->
-            <a href="https://wa.me/+201068083975?text=I_love_you_too!" target="_blank" class="whatsapp-btn">
+            <a href="https://wa.me/01068083975?text=I_love_you_too!" target="_blank" class="whatsapp-btn">
                 <i class="fab fa-whatsapp"></i> Send Love
             </a>
         </div>
@@ -628,6 +628,12 @@
                 "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ODk2NmZzYzJxbWN2a3gzd2ZleTIyc2xxNmhpMTAwb2U5NzExeWNzaiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/NTY1kHmcLsCsg/giphy.gif",
                 "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDVtc2VmcWZrZzgyd3YxOGI0dTVia21lajl5eXA1MG9zdzZsNWR0ZiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/98MaHVwJOmWMz4cz1K/giphy.gif"  // Sadness
             ];
+
+            // Preload Images to avoid delay
+            sadGifs.forEach(gifUrl => {
+                const img = new Image();
+                img.src = gifUrl;
+            });
 
             let noClickCount = 0;
 
@@ -739,4 +745,3 @@
 </body>
 
 </html>
-
